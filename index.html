@@ -1,243 +1,385 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Tabla de Verdad</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            line-height: 1.6;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .input-group {
-            margin: 10px 0;
-        }
-        button {
-            padding: 8px 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #459649;
-        }
-        .error {
-            color: red;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Generador de Tabla de Verdad</title>
+  <style>
+    /* Reset básico */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #fafafa;
+    }
+
+    h1, h2, h3 {
+      text-align: center;
+      width: 100%;
+      max-width: 800px;
+    }
+
+    #input-section, #result-section {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .input-group {
+      margin: 10px 0;
+      width: 100%;
+      max-width: 300px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .input-group label {
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .input-group input {
+      padding: 8px;
+      width: 100%;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+      align-self: center;
+      min-width: 150px;
+    }
+
+    button:hover {
+      background-color: #459649;
+    }
+
+    .error {
+      color: red;
+      font-size: 14px;
+      margin-top: 3px;
+      align-self: center;
+      height: 18px;
+    }
+
+    .card {
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 8px;
+      background-color: #f4f4f4;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 800px;
+    }
+
+    .card h3 {
+      margin-top: 0;
+      text-align: center;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 23px;
+      justify-content: center;
+      margin-top: 30px;
+      width: 90%;
+      max-width: 800px;
+    }
+
+    .col {
+      flex: 1 1 300px;
+      min-width: 480px;
+      max-width: 400px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0 0 0;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    thead th {
+      background-color: #ddd;
+      padding: 8px;
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    tbody td {
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+
+    /* Para tablas horizontales en móviles */
+    #tabla-container {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 15px;
+    }
+
+    /* Ajuste responsive inputs en pantallas pequeñas */
+    @media (max-width: 480px) {
+      .input-group {
+        max-width: 100%;
+        width: 100%;
+      }
+
+      button {
+        width: 100%;
+        min-width: unset;
+      }
+
+      .row {
+        flex-direction: column;
+        max-width: 100%;
+      }
+
+      .col {
+        max-width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-    <h1>Generador de Tabla de Verdad</h1>
+  <h1>Generador de Tabla de Verdad</h1>
+
+  <div id="input-section">
+    <p style="text-align:center; max-width: 800px;">
+      Ingrese los valores de verdad (V/F) para cada proposición:
+    </p>
     
-    <div id="input-section">
-        <p>Ingrese los valores de verdad (V/F) para cada proposición:</p>
-        
-        <div class="input-group">
-            <label for="p">P: </label>
-            <input type="text" id="p" maxlength="1" placeholder="V o F">
-            <span id="p-error" class="error"></span>
-        </div>
-        
-        <div class="input-group">
-            <label for="q">Q: </label>
-            <input type="text" id="q" maxlength="1" placeholder="V o F">
-            <span id="q-error" class="error"></span>
-        </div>
-        
-        <div class="input-group">
-            <label for="r">R: </label>
-            <input type="text" id="r" maxlength="1" placeholder="V o F">
-            <span id="r-error" class="error"></span>
-        </div>
-        
-        <div class="input-group">
-            <label for="s">S: </label>
-            <input type="text" id="s" maxlength="1" placeholder="V o F">
-            <span id="s-error" class="error"></span>
-        </div>
-        
-        <button onclick="generarTabla()">Generar Tabla de Verdad</button>
+    <div class="input-group">
+      <label for="p">P: </label>
+      <input type="text" id="p" maxlength="1" placeholder="V o F" />
+      <span id="p-error" class="error"></span>
     </div>
     
-    <div id="result-section" style="display: none;">
-        <h2>Tabla de Verdad Generada</h2>
-        <div id="tabla-container"></div>
-        <button onclick="volver()">Volver</button>
+    <div class="input-group">
+      <label for="q">Q: </label>
+      <input type="text" id="q" maxlength="1" placeholder="V o F" />
+      <span id="q-error" class="error"></span>
     </div>
     
-    <script>
-        function validarEntrada(valor) {
-            return valor.toUpperCase() === 'V' || valor.toUpperCase() === 'F';
-        }
-        
-        function generarTabla() {
-            // Obtener valores
-            const p = document.getElementById('p').value.toUpperCase();
-            const q = document.getElementById('q').value.toUpperCase();
-            const r = document.getElementById('r').value.toUpperCase();
-            const s = document.getElementById('s').value.toUpperCase();
-            
-            // Validar entradas
-            let valido = true;
-            
-            if (!validarEntrada(p)) {
-                document.getElementById('p-error').textContent = 'Debe ser V o F';
-                valido = false;
-            } else {
-                document.getElementById('p-error').textContent = '';
+    <div class="input-group">
+      <label for="r">R: </label>
+      <input type="text" id="r" maxlength="1" placeholder="V o F" />
+      <span id="r-error" class="error"></span>
+    </div>
+    
+    <div class="input-group">
+      <label for="s">S: </label>
+      <input type="text" id="s" maxlength="1" placeholder="V o F" />
+      <span id="s-error" class="error"></span>
+    </div>
+    
+    <button onclick="generarTabla()">Generar Tabla de Verdad</button>
+
+    <div class="card">
+      <h3>Datos del Alumno</h3>
+      <p><strong>Nombre:</strong> Gabriel</p>
+      <p><strong>Curso:</strong> Lógica computacional</p>
+      <p><strong>Tema:</strong> Tablas de verdad</p>
+    </div>
+
+    <div class="row">
+      <div class="col card">
+        <h3>Significados de los símbolos</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Símbolo</th>
+              <th>Nombre</th>
+              <th>Significado</th>
+              <th>Uso</th>
+              <th>Ejemplo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>¬</td>
+              <td>Negación</td>
+              <td>Cambia el valor de verdad</td>
+              <td>Se usa para negar una proposición</td>
+              <td>¬P (si P es V, ¬P es F)</td>
+            </tr>
+            <tr>
+              <td>∧</td>
+              <td>Conjunción</td>
+              <td>Es verdadera solo si ambas proposiciones lo son</td>
+              <td>P ∧ Q significa "P y Q"</td>
+              <td>V ∧ V = V; V ∧ F = F</td>
+            </tr>
+            <tr>
+              <td>∨</td>
+              <td>Disyunción</td>
+              <td>Es verdadera si al menos una es verdadera</td>
+              <td>P ∨ Q significa "P o Q"</td>
+              <td>F ∨ V = V</td>
+            </tr>
+            <tr>
+              <td>→</td>
+              <td>Implicación</td>
+              <td>Si la primera es verdadera y la segunda falsa, es falsa</td>
+              <td>P → Q significa "Si P, entonces Q"</td>
+              <td>V → F = F</td>
+            </tr>
+            <tr>
+              <td>↔</td>
+              <td>Bicondicional</td>
+              <td>Es verdadera si ambas tienen el mismo valor</td>
+              <td>P ↔ Q significa "P si y solo si Q"</td>
+              <td>V ↔ V = V; V ↔ F = F</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="col card">
+        <h3>Observaciones</h3>
+        <p>Este generador de tablas de verdad permite visualizar combinaciones lógicas básicas usando hasta cuatro proposiciones.</p>
+        <p>Puede ser útil para ejercicios de lógica proposicional o informática.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="result-section" style="display: none;">
+    <h2>Tabla de Verdad Generada</h2>
+    <div id="tabla-container"></div>
+    <button onclick="volver()">Volver</button>
+  </div>
+
+  <script>
+    function validarEntrada(valor) {
+      return valor.toUpperCase() === 'V' || valor.toUpperCase() === 'F';
+    }
+
+    function generarTabla() {
+      const p = document.getElementById('p').value.toUpperCase();
+      const q = document.getElementById('q').value.toUpperCase();
+      const r = document.getElementById('r').value.toUpperCase();
+      const s = document.getElementById('s').value.toUpperCase();
+
+      let valido = true;
+      if (!validarEntrada(p) && p !== '') {
+        document.getElementById('p-error').textContent = 'Debe ser V o F';
+        valido = false;
+      } else document.getElementById('p-error').textContent = '';
+
+      if (!validarEntrada(q) && q !== '') {
+        document.getElementById('q-error').textContent = 'Debe ser V o F';
+        valido = false;
+      } else document.getElementById('q-error').textContent = '';
+
+      if (!validarEntrada(r) && r !== '') {
+        document.getElementById('r-error').textContent = 'Debe ser V o F';
+        valido = false;
+      } else document.getElementById('r-error').textContent = '';
+
+      if (!validarEntrada(s) && s !== '') {
+        document.getElementById('s-error').textContent = 'Debe ser V o F';
+        valido = false;
+      } else document.getElementById('s-error').textContent = '';
+
+      if (!valido) return;
+
+      const combinaciones = generarCombinaciones();
+      let tablaHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>P</th><th>Q</th><th>R</th><th>S</th>
+              <th>¬P</th><th>P ∧ Q</th><th>P ∨ Q</th><th>P → Q</th><th>P ↔ Q</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      combinaciones.forEach(([P, Q, R, S]) => {
+        tablaHTML += `
+          <tr>
+            <td>${P}</td><td>${Q}</td><td>${R}</td><td>${S}</td>
+            <td>${negacion(P)}</td>
+            <td>${conjuncion(P, Q)}</td>
+            <td>${disyuncion(P, Q)}</td>
+            <td>${implicacion(P, Q)}</td>
+            <td>${bicondicional(P, Q)}</td>
+          </tr>
+        `;
+      });
+
+      tablaHTML += '</tbody></table>';
+
+      document.getElementById('tabla-container').innerHTML = tablaHTML;
+      document.getElementById('input-section').style.display = 'none';
+      document.getElementById('result-section').style.display = 'block';
+    }
+
+    function generarCombinaciones() {
+      const valores = ['V', 'F'];
+      const combinaciones = [];
+      for (let i = 0; i < valores.length; i++) {
+        for (let j = 0; j < valores.length; j++) {
+          for (let k = 0; k < valores.length; k++) {
+            for (let l = 0; l < valores.length; l++) {
+              combinaciones.push([valores[i], valores[j], valores[k], valores[l]]);
             }
-            
-            if (!validarEntrada(q)) {
-                document.getElementById('q-error').textContent = 'Debe ser V o F';
-                valido = false;
-            } else {
-                document.getElementById('q-error').textContent = '';
-            }
-            
-            if (!validarEntrada(r)) {
-                document.getElementById('r-error').textContent = 'Debe ser V o F';
-                valido = false;
-            } else {
-                document.getElementById('r-error').textContent = '';
-            }
-            
-            if (!validarEntrada(s)) {
-                document.getElementById('s-error').textContent = 'Debe ser V o F';
-                valido = false;
-            } else {
-                document.getElementById('s-error').textContent = '';
-            }
-            
-            if (!valido) return;
-            
-            // Generar tabla de verdad
-            const combinaciones = generarCombinaciones();
-            let tablaHTML = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th>P</th>
-                            <th>Q</th>
-                            <th>R</th>
-                            <th>S</th>
-                            <th>¬P</th>
-                            <th>¬Q</th>
-                            <th>¬R</th>
-                            <th>¬S</th>
-                            <th>P ∧ Q</th>
-                            <th>P ∨ Q</th>
-                            <th>P → Q</th>
-                            <th>P ↔ Q</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-            
-            for (const comb of combinaciones) {
-                // Usar los valores ingresados o los de la combinación
-                const valorP = p !== '' ? p : comb[0];
-                const valorQ = q !== '' ? q : comb[1];
-                const valorR = r !== '' ? r : comb[2];
-                const valorS = s !== '' ? s : comb[3];
-                
-                // Calcular operaciones
-                const noP = negacion(valorP);
-                const noQ = negacion(valorQ);
-                const noR = negacion(valorR);
-                const noS = negacion(valorS);
-                
-                const pYq = conjuncion(valorP, valorQ);
-                const pOq = disyuncion(valorP, valorQ);
-                const pEntoncesQ = implicacion(valorP, valorQ);
-                const pSiysoloSiQ = bicondicional(valorP, valorQ);
-                
-                tablaHTML += `
-                    <tr>
-                        <td>${valorP}</td>
-                        <td>${valorQ}</td>
-                        <td>${valorR}</td>
-                        <td>${valorS}</td>
-                        <td>${noP}</td>
-                        <td>${noQ}</td>
-                        <td>${noR}</td>
-                        <td>${noS}</td>
-                        <td>${pYq}</td>
-                        <td>${pOq}</td>
-                        <td>${pEntoncesQ}</td>
-                        <td>${pSiysoloSiQ}</td>
-                    </tr>
-                `;
-            }
-            
-            tablaHTML += `
-                    </tbody>
-                </table>
-            `;
-            
-            // Mostrar resultados
-            document.getElementById('tabla-container').innerHTML = tablaHTML;
-            document.getElementById('input-section').style.display = 'none';
-            document.getElementById('result-section').style.display = 'block';
+          }
         }
-        
-        function generarCombinaciones() {
-            const valores = ['V', 'F'];
-            const combinaciones = [];
-            
-            for (const p of valores) {
-                for (const q of valores) {
-                    for (const r of valores) {
-                        for (const s of valores) {
-                            combinaciones.push([p, q, r, s]);
-                        }
-                    }
-                }
-            }
-            
-            return combinaciones;
-        }
-        
-        function negacion(valor) {
-            return valor === 'V' ? 'F' : 'V';
-        }
-        
-        function conjuncion(a, b) {
-            return (a === 'V' && b === 'V') ? 'V' : 'F';
-        }
-        
-        function disyuncion(a, b) {
-            return (a === 'V' || b === 'V') ? 'V' : 'F';
-        }
-        
-        function implicacion(a, b) {
-            return (a === 'V' && b === 'F') ? 'F' : 'V';
-        }
-        
-        function bicondicional(a, b) {
-            return a === b ? 'V' : 'F';
-        }
-        
-        function volver() {
-            document.getElementById('input-section').style.display = 'block';
-            document.getElementById('result-section').style.display = 'none';
-        }
-    </script>
+      }
+      return combinaciones;
+    }
+
+    function negacion(valor) {
+      return valor === 'V' ? 'F' : 'V';
+    }
+
+    function conjuncion(a, b) {
+      return a === 'V' && b === 'V' ? 'V' : 'F';
+    }
+
+    function disyuncion(a, b) {
+      return a === 'F' && b === 'F' ? 'F' : 'V';
+    }
+
+    function implicacion(a, b) {
+      return a === 'V' && b === 'F' ? 'F' : 'V';
+    }
+
+    function bicondicional(a, b) {
+      return a === b ? 'V' : 'F';
+    }
+
+    function volver() {
+      document.getElementById('input-section').style.display = 'flex';
+      document.getElementById('result-section').style.display = 'none';
+    }
+  </script>
 </body>
 </html>
